@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>BUA 345 - Lecture 17</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Penelope Pooler Eisenbies" />
+    <meta name="date" content="2023-03-23" />
+    <script src="docs_files/header-attrs/header-attrs.js"></script>
+    <link href="docs_files/panelset/panelset.css" rel="stylesheet" />
+    <script src="docs_files/panelset/panelset.js"></script>
+    <link href="docs_files/tile-view/tile-view.css" rel="stylesheet" />
+    <script src="docs_files/tile-view/tile-view.js"></script>
+    <script src="docs_files/xaringanExtra_fit-screen/fit-screen.js"></script>
+    <link href="docs_files/tachyons/tachyons.min.css" rel="stylesheet" />
+    <link href="docs_files/animate.css/animate.xaringan.css" rel="stylesheet" />
+    <link rel="stylesheet" href="xaringan-themer.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+background-image: url("docs_files/images/sloth_faded.png")
+background-size: cover
+
+class: bottom, right
+
+## BUA 345 - Lecture 17
+
+### Logistic Regression
+
+&lt;br&gt;
+
+
+#### Penelope Pooler Eisenbies
+
+#### 2023-03-23
+
+[Wikipedia Sloth Page](https://en.wikipedia.org/wiki/Sloth)
+
+---
+
+### Upcoming Dates
+
+.pull-left[
+
+- **HW 7 was due on Monday, 3/20**. 
+
+   - Grace Period is extended until Wednesday 3/22 at midnight, because of Spring Break.
+   
+- **HW 8 is now posted and is due Monday, 3/27**
+
+  - Part 1 pertains to Lectures 15 and 16 
+    
+  - Part 2 pertains to Lecture 17 (today's lecture)
+  
+- **Quiz 2 is Thursday, March 30th**
+
+  - Practice Questions will be posted by Friday (or Saturday)
+
+]
+
+.pull-right[
+
+
+
+]
+
+---
+
+### Getting Started with Markdown (Updated)
+
+.pull-left[
+
+- Download Zipped R project 
+
+- Open Zipped folder and copy internal folder (R Project) to a BUA 345 folder on your computer NOT IN DOWLOADS
+
+- **Open R Project:**
+  
+  - *OPTION 1:* Click on .Rproj file to open project and RStudio
+
+  - *OPTION 2:* Open RStudio, then click File &gt; Open Project &gt; then navigate to  and click on .Rproj file.
+  
+
+- **Once Project is opened in RStudio:**
+
+  - Click on `code_data_output` file to open it.
+
+  - Click on `BUA_345_Lecture_17.Rmd` to open it.
+
+  - Run `setup` Chunk
+
+
+]
+
+.pull-right[
+
+
+
+]
+
+---
+
+### Setup
+
+.pull-left[
+
+- The setup chunk shows the packages needed for this demo.   
+
+- R will install specified packages if needed (only required once after R is installed)  
+
+- R will load specified packaged (required every time you start a new R session)  
+
+- The first time you run this code, R will install these packages which will be slow.  
+
+- **If you get warnings, that's okay.**  
+
+- If you get **error messages**, I (or TA), can help you.
+
+]
+
+
+.pull-right[
+
+
+
+]
+
+
+---
+
+### Setup Chunk for Lecture 17
+
+
+```r
+# this line specifies options for default options for all R Chunks
+knitr::opts_chunk$set(echo=T, highlight=T)
+# suppress scientific notation
+options(scipen=100)
+
+# install helper package that loads and installs other packages, if needed
+if (!require("pacman")) install.packages("pacman", repos = "http://lib.stat.cmu.edu/R/CRAN/")
+
+# install and load required packages
+pacman::p_load(pacman,tidyverse, magrittr, olsrr, gridExtra, ggiraphExtra, knitr, viridis, blorr)
+
+# verify packages
+p_loaded()
+```
+
+```
+##  [1] "blorr"          "xaringanthemer" "viridis"        "viridisLite"   
+##  [5] "knitr"          "ggiraphExtra"   "gridExtra"      "olsrr"         
+##  [9] "magrittr"       "forcats"        "stringr"        "dplyr"         
+## [13] "purrr"          "readr"          "tidyr"          "tibble"        
+## [17] "ggplot2"        "tidyverse"      "pacman"
+```
+
+**NOTES:
+
+- ** NEW PACKAGE FOR LOGISTIC REGRESSION: `blorr`
+
+- If you are having trouble installing/loading any packages, please come to office hour or make an appointment with me or course TA.
+
+---
+
+### Lecture 17 In-class Exercises
+
+.pull-left[
+
+#### **Question 1 (L17) - Session ID: bua345s23**
+
+Review Question from Lecture 16 and HW 8.
+
+In Lecture 16, we discussed three fit statistics, measures of how well the model 'fits' the data.
+ 
+Fill in the blank(s) using the correct choice.
+Ideally our chosen model has the 
+
+- `____` Adjusted R&lt;sup&gt;2&lt;/sup&gt;
+
+- `____` Mallow's C(p)
+
+- `____` AIC
+
+]
+
+.pull-right[
+
+
+
+]
+
+
+---
+
+### Models we've covered so far
+
+- Up until now in MAS 261 and BUA 345:
+
+  - All of our regression models (SLR and MLR) have had a response, Y, that was ***QUANTITATIVE*** and ideally normal (or transformed to be normal):
+
+    -   amount of sleep
+
+    -   selling price
+
+    -   natural log of insurance charges
+
+    -   etc.
+    
+---
+
+### How Logistic Regression is different
+
+- Today we'll model responses (y variables) that are ***CATEGORICAL*** and ***BINARY***, such as
+
+   - yes or no
+
+   - survive or not
+
+   - disease or no disease
+
+- LOGISTIC REGRESSION is used when your response is BINARY (has two categories)
+
+   - This is one type of generalization of the linear model format you've already learned.
+
+   - There are MANY other model generalizations for other data types (not covered in BUA 345).
+
+   - These models are called GENERALIZED LINEAR MODELS (GLM):
+
+     - We are relaxing or the assumption that the response, Y is quantitative and normal.
+    
+---
+
+### Logistic Regression Models
+
+.pull-left[
+
+- We can't model the dichotomous (two-category) response directly using the linear model.
+
+- Instead, we **'LINK'** our binary response to our predictor variables using a link function.
+
+- The underlying math is interesting, but not needed for this course.
+]
+
+.pull-right[
+
+
+
+]
+
+---
+
+### Probability and Odds
+
+- In order to understand logistic regression models, it is helpful to know:
+
+  - The differences between Probability and Odds
+
+  - How to convert Probability to Odds and vise versa
+
+  - How to convert Log Odds to probability using `exp` OR `plogis` function
+
+- We cover these concepts FIRST, because:
+
+  - Log Odds, LN(ODDS), is the link (link function)
+
+  - This function LINKS our two categorical response, Y to our predictor (X) variables:
+
+- If we understand this link, then we can understand and interpret Logistic Regression analyses.
+
+---
+
+### Probability and Odds are NOT the same!
+
+-   Odds are often used incorrectly. For example:
+
+#![](Plane_Odds_Incorrect.png)
+
+-   This item indicates that the PROBABILITY of survival is 95.7%
+
+-   Odds of Survival `\(≠\)` Probability of Survival = P(Survival)
+
+$$
+Odds(Survival) = \frac{P(Survival)}{1-P(Survival)} = ?
+$$
+
+-   **Note: This question is in HW 8**
+
+---
+
+
+### Dice Example
+
+.pull-left[
+
+
+&lt;img src="docs_files/figure-html/dice demo-1.png" width="504" /&gt;
+
+
+]
+
+.pull-right[
+
+&lt;br&gt;
+
+The probability of any side of the die is 1/6:
+
+$$P(1) = P(2) = P(3) = P(4) = P(5) = P(6) = 1/6 $$
+
+&lt;br&gt;
+
+The Odds of any side, e.g. rolling a 2 is as follows:
+
+$$
+Odds(2) = \frac{P(2)}{1-P(2)} = 
+\frac{\frac{1}{6}}{1-\frac{1}{6}} = 
+\frac{\frac{1}{6}}{\frac{5}{6}} = \frac{1}{5}
+$$
+
+]
+
+---
+
+### Lecture 17 In-class Exercises
+
+#### **Question 2 (L17) - Session ID: bua345s23**
+
+The probability(p) of rolling a 3 or higher with a single die is 4/6 or 2/3, i.e., `\(P(3,4,5,6) = \frac{2}{3}\)`.
+
+**What are the ODDS of rolling a 3 or higher?**
+
+Hint: It is possible for odds to be greater than 1.
+
+&lt;br&gt;
+
+#### **Question 3 (L17)** 
+
+If you flip a fair coin, the probability of heads = probability of tails = 1/2, i.e., `\(P(Heads) = P(Tails) = \frac{1}{2}\)`
+
+**What are the odds of a coin landing on heads?**
+
+---
+
+### Odds and Betting
+
+- Horse-racing and betting are where people commonly hear the term odds.
+
+- For example, a horse in a race has 9 to 1 odds of winning.
+
+- What is the probability this horse will win?
+
+  - **How do we calculate probability from odds?**
+
+$$
+Probability = \frac{Odds}{1 + Odds}
+$$
+
+- **9 to 1 odds means Odds = `\(\frac{1}{9}\)`**
+
+$$ 
+P(Win) = \frac{\frac{1}{9}}{1 + \frac{1}{9}} = 
+\frac{\frac{1}{9}}{\frac{10}{9}} =
+\frac{1}{10} = 0.1
+$$ 
+
+**Conclusion:** A horse with 9 to 1 odds of winning has a 10% chance of winning the horse race.
+
+---
+
+### Lecture 17 In-class Exercises
+
+#### **Question 4 (L17) - Session ID: bua345s23**
+
+In Texas Hold'em, each player get's two face down cards in their 'pocket'. There are also three face up cards that everyone can use to make their best hand.
+
+&lt;br&gt;
+
+The odds of getting a 'Pocket Pair', a pair two cards of the same value in the face down cards is 16 to 1, i.e `\(Odds(Pocket Pair) = \frac{1}{16}\)`
+
+&lt;br&gt;
+
+**What is the probability of a pocket pair?** Round your answer to 3 decimal places
+
+Recall:
+
+$$
+Probability = \frac{Odds}{1 + Odds}
+$$
+
+---
+
+### Why Odds are useful to Logistic Regression
+
+.pull-left[
+
+- Probability is more intuitive
+
+- Odds, and more specifically, ***LN(Odds)*** are the magic LINK between a binary response and our predictor variables.
+
+- When we do Logistic Regression, the estimated response will be LN(Odds)
+
+- Just like we back transform LN(Y) to get Y, we can convert LN(Odds) to probabilities.
+
+
+]
+
+.pull-right[
+
+
+
+]
+
+
+---
+
+### Why back-transform Log-odds
+
+**We DON'T want to know:**
+
+  - the estimated log odds of winning a game
+  - the estimated log odds that it will rain tomorrow
+
+**We DO want to know:**
+
+  - the estimated PROBABILITY of winning a game
+  - the estimated PROBABILITY that it will rain tomorrow
+
+So, we can convert the estimated log odds to a probability in Excel or R:
+
+  -   Y' = Estimated Log Odds = Estimate of `\(LN(\frac{P}{1-P})\)` from model
+
+  -   Y' is the model estimate that we want to convert to a probability
+
+  -   Est. Probability, `\(P = \frac{e^{Y'}}{1+e^{Y'}}\)`
+
+  -   This can be calculated in Excel or R using the `exp` function:
+
+  -   This conversion can be done more simply in R with the `plogis` function
+  
+---
+
+### Example of Converting Log Odds
+
+- A logistic regression model predicts the log odds that a small business owner will be audited by the IRS based on relevant predictor variables.
+
+- Based on this model, a cafe in Syracuse determines that the estimated log odds of being audited in 2022 is -1.946, **Y' = -1.946**
+
+#### Lecture 17 In-class Exercises
+
+#### **Question 5 (L17) - Session ID: bua345s23**
+
+If Estimated Log Odds = Y' = -1.946, what is the probability that this cafe will be audited?
+
+Recall: Est. Probability, `\(P = \frac{e^{Y'}}{1+e^{Y'}}\)`
+
+
+```r
+# ln_odds &lt;- 
+
+# using exp function (same as excel)
+
+# using plogis function (only in R)
+```
+
+---
+
+### Logistic Regression in R
+
+&lt;br&gt;
+
+The following examples will show how logistic regression uses LN(Odds) as a link function to model a two category (binary) response.
+
+- The model estimates, LN(Odds) can be converted to probabilities
+
+- For HWs and quizzes and the final exam you will be expected to:
+
+  - calculate odds from probabilities.
+
+  - calculate probabilities from odds.
+
+  - estimate probabilities from log odds estimates from a logistic regression model.
+
+---
+
+### Titanic data
+
+.pull-left[
+
+More complete version of Titanic passenger data than we worked with before.
+
+All data are CATEGORICAL:
+
+- Response, Y, is Survived: Yes or No
+
+- Predictors, X variables, are:
+
+   - Class (of Passenger ticket): First, Second, Third , Crew
+
+   - Age (Category): Adult, Child
+
+   - Gender: Male, Female
+
+**What is the estimated probability of survival based on gender, age category, and passenger class?**
+]
+
+&lt;br&gt;
+
+.pull-right[
+
+
+
+
+]
+
+---
+
+### Verifying Data for Logistic Regression
+
+In order to use Logistic Regression the following conditions must be met:
+
+- Each category of each predictor variable has more than **ONE** observation in each response category
+
+- MOST categories have more than **FIVE** observations in each response category
+
+
+```r
+# import and examine data
+titanic &lt;- read_csv("titanic.csv", show_col_types = F) |&gt;
+  glimpse()
+```
+
+```
+## Rows: 2,201
+## Columns: 4
+## $ Class    &lt;chr&gt; "Crew", "First", "Crew", "Third", "First", "Crew", "Third", "…
+## $ Age      &lt;chr&gt; "Adult", "Adult", "Adult", "Adult", "Adult", "Adult", "Adult"…
+## $ Gender   &lt;chr&gt; "Male", "Female", "Male", "Male", "Male", "Male", "Male", "Ma…
+## $ Survived &lt;chr&gt; "Yes", "Yes", "No", "No", "No", "No", "No", "No", "Yes", "No"…
+```
+
+---
+
+### Verifying Data for Logistic Regression
+
+- These tables show that all categories of each predictor variable have some 'Yes' and some 'No' observations.
+-   All categories are represented in both categories of response, so all predictors can be used in model.
+
+```r
+titanic |&gt; select(Survived, Class) |&gt; table()   # examine data by class category
+```
+
+```
+##         Class
+## Survived Crew First Second Third
+##      No   673   122    167   528
+##      Yes  212   203    118   178
+```
+
+```r
+titanic |&gt; select(Survived, Age) |&gt; table()     # examine data by age category
+```
+
+```
+##         Age
+## Survived Adult Child
+##      No   1438    52
+##      Yes   654    57
+```
+
+```r
+titanic |&gt; select(Survived, Gender) |&gt; table()  # examine data by gender
+```
+
+```
+##         Gender
+## Survived Female Male
+##      No     126 1364
+##      Yes    344  367
+```
+
+---
+
+### Specifying the Logistic Regression Model:
+
+The command we use in R, `glm` is used for Generalized Linear Models.
+
+- For BUA 345, you are expected to interpret the coefficients from a logistic regression model.
+
+  - Use provided code to get model estimates, LN(Odds)
+
+  - Convert Estimated LN(Odds) to probabilities
+
+  - In more advanced analytics courses, we will talk about model fit and validation.
+
+**Steps Shown in Following Code**
+
+**`1.`**  Create a `glm` model named `titanic_logistic`
+
+- `family=binomial(link = 'logit')` specifies the model has a binary (two-category) response
+
+**`2.`**  Output model results using `blr_regress` command from `blorr` package
+
+- If this package doesn't work, an alternative command is `summary`
+
+---
+
+### R code to Specify and Summarize Titanic Model
+
+
+```r
+titanic &lt;- titanic|&gt; mutate(SurvivedF = factor(Survived))         # create factor variable
+
+titanic_logistic &lt;- glm(SurvivedF ~ Class + Age + Gender, data=titanic, # specify model
+                        family=binomial(link = 'logit'))
+
+blr_regress(titanic_logistic) # examine model output
+# summary(titanic_logistic)   # alternative if bls_regress doesn't work
+```
+
+#### Part 1 of Output
+&lt;img src="docs_files/images/bls_regress_tit_output1.jpg" width="549" /&gt;
+
+---
+
+### R code to Specify and Summarize Titanic Model
+
+
+```r
+blr_regress(titanic_logistic) # examine model output
+```
+
+#### Part 2 of Output
+&lt;img src="docs_files/images/bls_regress_tit_output2.jpg" width="485" /&gt;
+
+---
+
+### Add Log Odds and Probabilities to Titanic Data
+
+
+```r
+titanic &lt;- titanic |&gt; # create a new variable that shows log odds of survival for each passenger
+  mutate(Log_Odds_Survival = titanic_logistic |&gt; glm(titanic, family = binomial) |&gt;  predict.glm() |&gt; round(4))
+         
+# convert log odds to probabilities using plogis command
+titanic &lt;- titanic |&gt; mutate(Prob_Survival = Log_Odds_Survival |&gt; plogis() |&gt; round(4)) 
+
+head(titanic) |&gt; kable()
+```
+
+
+
+|Class |Age   |Gender |Survived |SurvivedF | Log_Odds_Survival| Prob_Survival|
+|:-----|:-----|:------|:--------|:---------|-----------------:|-------------:|
+|Crew  |Adult |Male   |Yes      |Yes       |           -1.2339|        0.2255|
+|First |Adult |Female |Yes      |Yes       |            2.0438|        0.8853|
+|Crew  |Adult |Male   |No       |No        |           -1.2339|        0.2255|
+|Third |Adult |Male   |No       |No        |           -2.1540|        0.1040|
+|First |Adult |Male   |No       |No        |           -0.3762|        0.4070|
+|Crew  |Adult |Male   |No       |No        |           -1.2339|        0.2255|
+
+
+---
+
+### Titanic Model Interpretation
+
+
+We can use an Excel spreadsheet (like we did for MLR) to estimate **log odds** and **probabilities** for each category
+
+- For example:
+
+  - What is the probability that a Female Adult Crew member?
+
+  - What is the probability that a Male Adult in Third Class?
+
+  - What is the probability that a Male Child in First Class survived?
+
+- Recall:
+
+  - Baseline categories first alphabetically) are not shown.
+
+  - Baseline Class: Crew
+
+  - Baseline Age category: Adult
+
+  - Baseline Gender = Female
+  
+---
+
+### Lecture 17 In-class Exercises
+
+#### **Question 6 (L17) - Session ID: bua345s23**
+
+Based on the Titanic Logistic Regression Model, what is the probability that a Male Adult in Third Class survived?
+
+Use provided worksheet to do calculation. Round answer to 3 decimal places.
+
+&lt;br&gt;
+
+#### **Question 7 (L17) - Session ID: bua345s23**
+
+Based on the Titanic Logistic Regression Model, what is the probability that a Male Child in First Class survived?
+
+Use provided worksheet to do calculation. Round answer to 3 decimal places.
+
+---
+
+### Two Plots for Context
+
+-   The titanic data are commonly used because the differences between class and gender are so clear.
+-   When looking at probabilities by category, it is also important to look at numbers of observations in each category.
+
+&lt;img src="docs_files/figure-html/barplots for context-1.png" width="1080" style="display: block; margin: auto;" /&gt;
+
+---
+
+### Late Payment Data
+
+.pull-left[
+
+#### Logistic Regression with Quantitative Predictors
+
+- Data from the 7,550 consumers is used to create a logistic regression model
+
+- The goal is to estimate the probability of late payment on a credit card
+
+- Predictor (X) variables are:
+
+  - Age
+  - Number of Dependents
+  - Debt ratio = Total Debt/Total Assets
+
+]
+
+
+.pull-right[
+
+&lt;img src="docs_files/images/past_due.png" width="231" /&gt;
+
+]
+
+---
+
+### Logistic Regression with Quantitative Predictors
+
+- All three variables are **QUANTITATIVE**
+
+  - Correlation matrix indicates there is no multicollinearity
+  
+.pull-left[
+
+
+```r
+# import data and examine using glimpse
+late_payment &lt;- read_csv("LatePayment.csv", show_col_types = F) |&gt;
+  glimpse(width=40)
+```
+
+```
+## Rows: 7,550
+## Columns: 4
+## $ Age          &lt;dbl&gt; 57, 34, 42, 34, 6…
+## $ Dependents   &lt;dbl&gt; 0, 0, 0, 0, 0, 0,…
+## $ Debt_Ratio   &lt;dbl&gt; 0.39, 0.51, 0.48,…
+## $ Late_Payment &lt;chr&gt; "No", "Yes", "No"…
+```
+
+
+]
+
+.pull-right[
+
+
+```r
+# examine correlation matrix
+late_payment |&gt; select(Age:Debt_Ratio) |&gt;
+  cor() |&gt; round(2) |&gt; kable()
+```
+
+
+
+|           |   Age| Dependents| Debt_Ratio|
+|:----------|-----:|----------:|----------:|
+|Age        |  1.00|      -0.19|      -0.08|
+|Dependents | -0.19|       1.00|       0.09|
+|Debt_Ratio | -0.08|       0.09|       1.00|
+
+
+]
+
+---
+
+### Steps to Specify and Summarize Late Payment
+
+**`1.`** Create a `glm` model named `latepmt_logistic`
+  
+**`2.`** Output model results using `blr_regress` command from `blorr` package or `summary` command
+
+
+```r
+late_payment &lt;- late_payment |&gt; mutate(Late_PaymentF = factor(Late_Payment))  # create factor variable
+latepmt_logistic &lt;- glm(Late_PaymentF ~Age + Dependents + Debt_Ratio,         # specify model
+                        data=late_payment, family=binomial(link = 'logit'))
+blr_regress(latepmt_logistic) # examine model output
+```
+
+#### Part 1 of Output
+&lt;img src="docs_files/images/bls_regress_ltpmt_output1.jpg" width="573" /&gt;
+
+---
+
+### R code to Specify and Summarize Late Payment Model
+
+
+```r
+blr_regress(titanic_logistic) # examine model output
+```
+
+#### Part 2 of Output
+&lt;img src="docs_files/images/bls_regress_ltpmt_output2.jpg" width="523" /&gt;
+
+---
+
+### Add Log Odds and Probabilities to Late Payment Data
+
+
+```r
+late_payment &lt;- late_payment |&gt; # create a new variable that shows log odds of survival for each consumer
+  mutate(Log_Odds_Late_Payment = latepmt_logistic |&gt; glm(late_payment, family = binomial) |&gt; predict.glm() |&gt; round(4))
+         
+# convert log odds to probabilities using plogis command
+late_payment &lt;- late_payment |&gt; mutate(Prob_Late_Payment = Log_Odds_Late_Payment |&gt; plogis() |&gt; round(4))
+
+head(late_payment) |&gt; kable()
+```
+
+
+
+| Age| Dependents| Debt_Ratio|Late_Payment |Late_PaymentF | Log_Odds_Late_Payment| Prob_Late_Payment|
+|---:|----------:|----------:|:------------|:-------------|---------------------:|-----------------:|
+|  57|          0|       0.39|No           |No            |               -1.6849|            0.1564|
+|  34|          0|       0.51|Yes          |Yes           |               -1.3017|            0.2139|
+|  42|          0|       0.48|No           |No            |               -1.4215|            0.1944|
+|  34|          0|       0.24|No           |No            |               -1.6111|            0.1664|
+|  66|          0|       0.15|No           |No            |               -2.0561|            0.1134|
+|  53|          0|       0.11|No           |No            |               -1.9631|            0.1231|
+
+---
+
+### Late Payment Model Interpretation
+
+We can use an Excel spreadsheet (like we did for MLR) to estimate **log odds** and **probabilities** for each category
+
+- For example:
+
+  - What is the probability of a late payment for a 30 year old with 1 dependent and a debt ratio of 0.3?
+
+  - What would be the Percent Change in debt ratio if another 30 year old had 4 dependents and debt ratio of 0.5? (HW 8)
+
+### Lecture 17 In-class Exercises
+
+#### **Question 6 (L17) - Session ID: bua345s23**
+
+What is the probability of a late payment for a 30 year old with 1 dependent and a debt ratio of 0.3?
+
+Use provided worksheet to do calculation. Round answer to 3 decimal places.
+
+&lt;br&gt;
+
+### Now we're ready to examine HW 8 - Part 2
+
+---
+
+### Reminder Upcoming Dates
+
+.pull-left[
+
+- **HW 7 was due on Monday, 3/20**. 
+
+   - Grace Period was extended until Wednesday 3/22 at midnight, because of Spring Break.
+   
+   - HW 7 can still be turned in today (Thu. 3/23), for only a 10% deduction 
+   
+- **HW 8 is due Monday, 3/27**
+
+  - Part 1 pertains to Lectures 15 and 16 
+    
+  - Part 2 pertains to Lecture 17 (today's lecture)
+  
+- **Quiz 2 is Thursday, March 30th**
+
+  - Practice Questions will be posted this weekend.
+
+]
+
+.pull-right[
+
+
+
+]
+
+---
+
+background-image: url("docs_files/images/tired_panda_faded.png")
+background-size: cover
+
+.pull-left[
+
+### Key Points from Today
+
+.bg-azure.b--dark_cyan.ba.bw2.br3.shadow-5.ph2[
+
+- Logistic Regression is useful for predicting outcomes
+
+  - Helpful in decision making - provides probabilities
+
+  - Underlying math of GLM is more complex
+
+  - Software (such as R) allows students to bypass math and focus on interpretation
+
+- Important to understand
+
+  - Difference between Odds and Probabilities
+
+  - How to convert odds to probabilities and vise versa
+
+  - How to convert log odds to probabilities (you can use `plogis` function in R)
+  
+]
+
+]
+
+.pull-right[
+
+.bg-azure.b--dark_cyan.ba.bw2.br3.shadow-5.ph3[
+You may submit an 'Engagement Question' about each lecture until midnight on the day of the lecture. **A minimum of four submissions are required during the semester.**
+]
+
+]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"slideNumberFormat": "%current%/%total%",
+"highlightStyle": "tomorrow-night-bright",
+"highlightLines": true,
+"ratio": "16:9",
+"countIncrementalSlides": true,
+"keep_md": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
