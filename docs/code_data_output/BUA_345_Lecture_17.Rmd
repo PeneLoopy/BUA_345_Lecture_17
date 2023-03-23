@@ -1,163 +1,17 @@
 ---
-title: "BUA 345 - Lecture 17"
-subtitle: "Logistic Regression"  
+title: "BUA_345_Lecture_17"
 author: "Penelope Pooler Eisenbies"
-date: '`r Sys.Date()`'
-output:
-  xaringan::moon_reader:
-    seal: false
-    css: xaringan-themer.css
-    nature:
-      slideNumberFormat: "%current%/%total%" 
-      highlightStyle: tomorrow-night-bright
-      highlightLines: true
-      ratio: 16:9
-      countIncrementalSlides: true
-      keep_md: true
----
-
-```{r setup, include=FALSE, echo=FALSE}
-options(htmltools.dir.version = FALSE)
-knitr::opts_chunk$set(
-  fig.retina=2,
-  #out.width = "75%",
-  #out.height = "50%",
-  htmltools.preserve.raw = FALSE,      # needed for windows
-  scipen=100,                          # suppresses scientific notation
-  getSymbols.warning4.0 = FALSE,       # suppresses getSymbols warnings
-  cache = FALSE,
-  echo = TRUE,
-  hiline = TRUE,
-  message = FALSE, 
-  warning = FALSE
-)
-
-
-# install helper package (pacman)
-# pacman loads and installs other packages, if needed
-if (!require("pacman")) install.packages("pacman", repos = "http://lib.stat.cmu.edu/R/CRAN/")
-
-# install and load required packages
-# pacman should be first package in parentheses and then list others
-pacman::p_load(pacman,tidyverse, magrittr, olsrr, gridExtra, ggiraphExtra, knitr, viridis, png)
-
-# verify packages (comment out in finished documents)
-p_loaded()
-
-
-```
-
-```{r xaringan-themer, include=FALSE, warning=FALSE}
-library(xaringanthemer)
-
-palette <- c(
-  SU_Orange1        = "#F76900",
-  SU_Orange2        = "#FF8E00",
-  SU_Red_Orange     = "#FF431B",
-  SU_Blue1          = "#000E54",
-  SU_Blue2          = "#203299",
-  SU_Light_Blue     = "#2B72D7",
-  SU_White          = "#FFFFFF",
-  SU_Light_Gray     = "#ADB3B8",
-  SU_Medium_Gray    = "#707780",
-  SU_Black          = "#000000", 
-  
-  steel_blue        = "#4682B4",
-  corn_flower_blue  = "#6495ED",
-  deep_sky_blue     = "#00BFFF",
-  dark_magenta      = "#8B008B",
-  medium_orchid     = "#BA55D3",
-  lime_green        = "#32CD32",
-  light_sea_green   = "#20B2AA",
-  chartreuse        = "#7FFF00",
-  orange_red        = "#FF4500",
-  white_smoke       = "#F5F5F5",
-  dark_cyan         = "#008B8B",
-  light_steel_blue  = "#B0C4DE",
-  indigo            = "#4B0082",
-  ivory             = "#FFFFF0",
-  light_slate_grey  = "#778899",
-  linen             = "#FAF0E6",
-  steel_blue        = "#4682B4",
-  blue_violet       = "#8A2BE2",
-  dodger_blue       = "#1E90FF",
-  light_blue        = "#ADD8E6",
-  azure             = "#F0FFFF",
-  lavender          = "#E6E6FA")
-
-primary_color = "#4682B4"                # steel_blue
-secondary_color = "#778899"              # light_slate_grey
-white_color = "#FFFFF0"                  # ivory
-black_color = "#000080"                  # navy
-
-style_duo_accent(
-  primary_color = primary_color,
-  secondary_color = secondary_color,
-  white_color = white_color,
-  black_color = black_color,
-  text_color = black_color,
-  header_color = primary_color,
-  background_color = white_color,
-  code_inline_background_color = "#E6E6FA", # lavender
-  link_color = "#1E90FF",                   # dodger_blue
-  code_inline_color = "#4B0082",            # indigo
-  text_bold_color = "#8B008B",              # dark_magenta
-  header_font_google = google_font("Open Sans"),
-  text_font_google = google_font("Open Sans"),
-  code_font_google = google_font("Source Code Pro"),
-  colors = palette
-)
-
-
-```
-
-```{r xaringan-panelset, echo=FALSE}
-xaringanExtra::use_panelset()
-```
-
-```{r xaringan-tile-view, echo=FALSE}
-xaringanExtra::use_tile_view()
-```
-
-```{r xaringan-fit-screen, echo=FALSE}
-xaringanExtra::use_fit_screen()
-```
-
-```{r xaringan-tachyons, echo=FALSE}
-xaringanExtra::use_tachyons()
-```
-
-```{r xaringan-animate-css, echo=FALSE}
-xaringanExtra::use_animate_css()
-```
-
-```{r xaringan-animate-all, echo=FALSE}
-#xaringanExtra::use_animate_all("slide_up")
-```
-
-background-image: url("docs_files/images/sloth_faded.png")
-background-size: cover
-
-class: bottom, right
-
-## BUA 345 - Lecture 17
-
-### Logistic Regression
-
-<br>
-
-
-#### Penelope Pooler Eisenbies
-
-#### `r Sys.Date()`
-
-[Wikipedia Sloth Page](https://en.wikipedia.org/wiki/Sloth)
-
+date: "`r Sys.Date()`"
+output: 
+  html_document: 
+    code_folding: show
+    toc: yes
+    toc_depth: 4
+    toc_float: yes
 ---
 
 ### Upcoming Dates
 
-.pull-left[
 
 - **HW 7 was due on Monday, 3/20**. 
 
@@ -173,23 +27,10 @@ class: bottom, right
 
   - Practice Questions will be posted by Friday (or Saturday)
 
-]
-
-.pull-right[
-
-```{r owl pic, echo=FALSE}
-
-knitr::include_graphics("docs_files/images/owl.png")
-
-```
-
-]
 
 ---
 
 ### Getting Started with Markdown (Updated)
-
-.pull-left[
 
 - Download Zipped R project 
 
@@ -211,23 +52,9 @@ knitr::include_graphics("docs_files/images/owl.png")
   - Run `setup` Chunk
 
 
-]
-
-.pull-right[
-
-```{r beaver pic, echo=FALSE}
-
-knitr::include_graphics("docs_files/images/beaver.png")
-
-```
-
-]
-
 ---
 
 ### Setup
-
-.pull-left[
 
 - The setup chunk shows the packages needed for this demo.   
 
@@ -240,20 +67,6 @@ knitr::include_graphics("docs_files/images/beaver.png")
 - **If you get warnings, that's okay.**  
 
 - If you get **error messages**, I (or TA), can help you.
-
-]
-
-
-.pull-right[
-
-```{r owl pic2, echo=FALSE}
-
-knitr::include_graphics("docs_files/images/owl.png")
-
-```
-
-]
-
 
 ---
 
@@ -287,8 +100,6 @@ p_loaded()
 
 ### Lecture 17 In-class Exercises
 
-.pull-left[
-
 #### **Question 1 (L17) - Session ID: bua345s23**
 
 Review Question from Lecture 16 and HW 8.
@@ -303,19 +114,6 @@ Ideally our chosen model has the
 - `____` Mallow's C(p)
 
 - `____` AIC
-
-]
-
-.pull-right[
-
-```{r beaver pic2, echo=FALSE}
-
-knitr::include_graphics("docs_files/images/beaver.png")
-
-```
-
-]
-
 
 ---
 
@@ -359,24 +157,11 @@ knitr::include_graphics("docs_files/images/beaver.png")
 
 ### Logistic Regression Models
 
-.pull-left[
-
 - We can't model the dichotomous (two-category) response directly using the linear model.
 
 - Instead, we **'LINK'** our binary response to our predictor variables using a link function.
 
 - The underlying math is interesting, but not needed for this course.
-]
-
-.pull-right[
-
-```{r yes_no, echo=FALSE}
-
-knitr::include_graphics("docs_files/images/Yes_No.png")
-
-```
-
-]
 
 ---
 
@@ -402,20 +187,17 @@ knitr::include_graphics("docs_files/images/Yes_No.png")
 
 ### Probability and Odds are NOT the same!
 
-.pull-left[
-
 -   Odds are often used incorrectly. For example:
 
 ```{r plane graphic, echo=F}
 
-knitr::include_graphics("docs_files/images/Plane_Odds_Incorrect.png")
+knitr::include_graphics("Plane_Odds_Incorrect.png")
 
 ```
 
-]
 
+<br>
 
-.pull-right[
 
 This news item indicates that the PROBABILITY of survival is 95.7%
 
@@ -433,7 +215,6 @@ $$
 
 -   **Note: This question is in HW 8**
 
-]
 
 
 
@@ -441,8 +222,6 @@ $$
 
 
 ### Dice Example
-
-.pull-left[
 
 
 ```{r dice demo, echo=F}
@@ -466,10 +245,6 @@ ggplot()+
 ```
 
 
-]
-
-.pull-right[
-
 <br>
 
 The probability of any side of the die is 1/6:
@@ -486,7 +261,7 @@ Odds(2) = \frac{P(2)}{1-P(2)} =
 \frac{\frac{1}{6}}{\frac{5}{6}} = \frac{1}{5}
 $$
 
-]
+
 
 ---
 
@@ -566,8 +341,6 @@ $$
 
 ### Why Odds are useful to Logistic Regression
 
-.pull-left[
-
 - Probability is more intuitive
 
 - Odds, and more specifically, ***LN(Odds)*** are the magic LINK between a binary response and our predictor variables.
@@ -575,19 +348,6 @@ $$
 - When we do Logistic Regression, the estimated response will be LN(Odds)
 
 - Just like we back transform LN(Y) to get Y, we can convert LN(Odds) to probabilities.
-
-
-]
-
-.pull-right[
-
-```{r owl pic3, echo=FALSE}
-
-knitr::include_graphics("docs_files/images/owl.png")
-
-```
-
-]
 
 
 ---
@@ -667,8 +427,6 @@ The following examples will show how logistic regression uses LN(Odds) as a link
 
 ### Titanic data
 
-.pull-left[
-
 More complete version of Titanic passenger data than we worked with before.
 
 All data are CATEGORICAL:
@@ -684,20 +442,7 @@ All data are CATEGORICAL:
    - Gender: Male, Female
 
 **What is the estimated probability of survival based on gender, age category, and passenger class?**
-]
 
-<br>
-
-.pull-right[
-
-```{r titanic image, echo=F}
-
-knitr::include_graphics("docs_files/images/titanic.jpg")
-
-```
-
-
-]
 
 ---
 
@@ -748,7 +493,7 @@ The command we use in R, `glm` is used for Generalized Linear Models.
 
 **`1.`**  Create a `glm` model named `titanic_logistic`
 
-- `family=binomial(link = 'logit')` specifies the model has a binary (two-category) response
+   - `family=binomial(link = 'logit')` specifies the model has a binary (two-category) response
 
 **`2.`**  Output model results using `blr_regress` command from `blorr` package
 
@@ -772,7 +517,7 @@ blr_regress(titanic_logistic) # examine model output
 #### Part 1 of Output (Not Essential for BUA 345)
 ```{r image1 of titanic output, echo=F}
 
-knitr::include_graphics("docs_files/images/bls_regress_tit_output1.jpg")
+knitr::include_graphics("bls_regress_tit_output1.jpg")
 
 ```
 
@@ -786,19 +531,13 @@ blr_regress(titanic_logistic) # examine model output
 
 ```
 
-.pull-left[
 
 #### Part 2 of Output (Only Use Max. Likelihood Estimates in BUA 345)
 ```{r image2 of titanic output, echo=F}
 
-knitr::include_graphics("docs_files/images/bls_regress_tit_output2.jpg")
+knitr::include_graphics("bls_regress_tit_output2.jpg")
 
 ```
-
-
-]
-
-.pull-right[
 
 <br>
 
@@ -807,10 +546,6 @@ knitr::include_graphics("docs_files/images/bls_regress_tit_output2.jpg")
    - We will use these beta coefficients in Excel to show how regression estimates of log odds and probability are calculated for each observation (passenger) in the data.
 
 - `Pr(>|z|)` column shows the P-value for each beta coefficient.
-
-
-]
-
 
 
 ---
@@ -880,7 +615,7 @@ Use provided worksheet to do calculation. Round answer to 3 decimal places.
 -   The titanic data are commonly used because the differences between class and gender are so clear.
 -   When looking at probabilities by category, it is also important to look at numbers of observations in each category.
 
-```{r barplots for context, echo=F, fig.dim=c(15, 5), fig.align='center'}
+```{r barplots for context, echo=F, fig.dim=c(15,5), message=FALSE}
 
 # summarize and modify data for plot
 titanic_plot <- titanic |>
@@ -903,10 +638,10 @@ titanic_barplot1 <- titanic_plot |>
   facet_grid(~ClassF) +
   scale_fill_brewer(palette = "Set1") +
   labs(x = "", y = "Number of Passengers", fill = "", title = "Titanic Survival") +
-  theme(plot.title = element_text(size=20),
-        axis.title = element_text(size=18),
-        axis.text = element_text(size=15),
-        legend.text = element_text(size=10),
+  theme(plot.title = element_text(size=15),
+        axis.title = element_text(size=15),
+        axis.text = element_text(size=12),
+        legend.text = element_text(size=12),
         legend.position = "bottom",
         plot.background = element_rect(colour = "darkgrey", fill=NA, linewidth=2))
 
@@ -920,10 +655,10 @@ titanic_barplot2 <- titanic_plot |>
   facet_grid(~ClassF) +
   scale_fill_brewer(palette = "Set1") +
   labs(x = "", y = "Number of Passengers", fill = "", title = "Titanic Survival (Excluding Adult Males)") +
-  theme(plot.title = element_text(size=20),
-        axis.title = element_text(size=18),
-        axis.text = element_text(size=15),
-        legend.text = element_text(size=10),
+  theme(plot.title = element_text(size=15),
+        axis.title = element_text(size=15),
+        axis.text = element_text(size=12),
+        legend.text = element_text(size=12),
         legend.position = "bottom",
         plot.background = element_rect(colour = "darkgrey", fill=NA, linewidth=2))
   
@@ -934,8 +669,6 @@ grid.arrange(titanic_barplot1, titanic_barplot2, ncol=2)
 ---
 
 ### Late Payment Data
-
-.pull-left[
 
 #### Logistic Regression with Quantitative Predictors
 
@@ -949,18 +682,6 @@ grid.arrange(titanic_barplot1, titanic_barplot2, ncol=2)
   - Number of Dependents
   - Debt ratio = Total Debt/Total Assets
 
-]
-
-
-.pull-right[
-
-```{r past due graphic, echo=F}
-
-knitr::include_graphics("docs_files/images/past_due.png")
-
-```
-
-]
 
 ---
 
@@ -970,7 +691,6 @@ knitr::include_graphics("docs_files/images/past_due.png")
 
   - Correlation matrix indicates there is no multicollinearity
   
-.pull-left[
 
 ```{r import and examine late payment data}
 
@@ -981,9 +701,6 @@ late_payment <- read_csv("LatePayment.csv", show_col_types = F) |>
 ```
 
 
-]
-
-.pull-right[
 
 ```{r examine correlation matrix}
 
@@ -994,7 +711,6 @@ late_payment |> select(Age:Debt_Ratio) |>
 ```
 
 
-]
 
 ---
 
@@ -1014,7 +730,7 @@ blr_regress(latepmt_logistic) # examine model output
 #### Part 1 of Output (Not Essential for BUA 345)
 ```{r image1 of late payment output, echo=F}
 
-knitr::include_graphics("docs_files/images/bls_regress_ltpmt_output1.jpg")
+knitr::include_graphics("bls_regress_ltpmt_output1.jpg")
 
 ```
 
@@ -1028,21 +744,14 @@ blr_regress(titanic_logistic) # examine model output
 
 ```
 
-.pull-left[
 
 #### Part 2 of Output (Only Use Max. Likelihood Estimates in BUA 345)
-```{r image2 of late payment output, echo=F}
+```{r image2 of late paymt output, echo=F}
 
-knitr::include_graphics("docs_files/images/bls_regress_ltpmt_output2.jpg")
+knitr::include_graphics("bls_regress_ltpmt_output2.jpg")
 
 ```
 
-
-
-]
-
-
-.pull-right[
 
 <br>
 
@@ -1052,7 +761,6 @@ knitr::include_graphics("docs_files/images/bls_regress_ltpmt_output2.jpg")
 
 - `Pr(>|z|)` column shows the P-value for each beta coefficient.
 
-]
 
 
 ---
@@ -1095,50 +803,10 @@ Use provided worksheet to do calculation. Round answer to 3 decimal places.
 
 ### Now we're ready to examine HW 8 - Part 2
 
----
-
-### Reminder Upcoming Dates
-
-.pull-left[
-
-- **HW 7 was due on Monday, 3/20**. 
-
-   - Grace Period was extended until Wednesday 3/22 at midnight, because of Spring Break.
-   
-   - HW 7 can still be turned in today (Thu. 3/23), for only a 10% deduction 
-   
-- **HW 8 is due Monday, 3/27**
-
-  - Part 1 pertains to Lectures 15 and 16 
-    
-  - Part 2 pertains to Lecture 17 (today's lecture)
-  
-- **Quiz 2 is Thursday, March 30th**
-
-  - Practice Questions will be posted this weekend.
-
-]
-
-.pull-right[
-
-```{r owl pic4, echo=FALSE}
-
-knitr::include_graphics("docs_files/images/owl.png")
-
-```
-
-]
 
 ---
-
-background-image: url("docs_files/images/tired_panda_faded.png")
-background-size: cover
-
-.pull-left[
 
 ### Key Points from Today
-
-.bg-azure.b--dark_cyan.ba.bw2.br3.shadow-5.ph2[
 
 - Logistic Regression is useful for predicting outcomes
 
@@ -1156,14 +824,6 @@ background-size: cover
 
   - How to convert log odds to probabilities (you can use `plogis` function in R)
   
-]
+<br>
 
-]
-
-.pull-right[
-
-.bg-azure.b--dark_cyan.ba.bw2.br3.shadow-5.ph3[
 You may submit an 'Engagement Question' about each lecture until midnight on the day of the lecture. **A minimum of four submissions are required during the semester.**
-]
-
-]

@@ -77,7 +77,7 @@ class: bottom, right
 
 .pull-right[
 
-
+&lt;img src="docs_files/images/owl.png" width="304" /&gt;
 
 ]
 
@@ -111,7 +111,7 @@ class: bottom, right
 
 .pull-right[
 
-
+&lt;img src="docs_files/images/beaver.png" width="320" /&gt;
 
 ]
 
@@ -138,7 +138,7 @@ class: bottom, right
 
 .pull-right[
 
-
+&lt;img src="docs_files/images/owl.png" width="304" /&gt;
 
 ]
 
@@ -165,11 +165,11 @@ p_loaded()
 ```
 
 ```
-##  [1] "blorr"          "xaringanthemer" "viridis"        "viridisLite"   
-##  [5] "knitr"          "ggiraphExtra"   "gridExtra"      "olsrr"         
-##  [9] "magrittr"       "forcats"        "stringr"        "dplyr"         
-## [13] "purrr"          "readr"          "tidyr"          "tibble"        
-## [17] "ggplot2"        "tidyverse"      "pacman"
+##  [1] "blorr"          "xaringanthemer" "png"            "viridis"       
+##  [5] "viridisLite"    "knitr"          "ggiraphExtra"   "gridExtra"     
+##  [9] "olsrr"          "magrittr"       "forcats"        "stringr"       
+## [13] "dplyr"          "purrr"          "readr"          "tidyr"         
+## [17] "tibble"         "ggplot2"        "tidyverse"      "pacman"
 ```
 
 **NOTES:
@@ -203,7 +203,7 @@ Ideally our chosen model has the
 
 .pull-right[
 
-
+&lt;img src="docs_files/images/beaver.png" width="320" /&gt;
 
 ]
 
@@ -261,7 +261,7 @@ Ideally our chosen model has the
 
 .pull-right[
 
-
+&lt;img src="docs_files/images/Yes_No.png" width="293" /&gt;
 
 ]
 
@@ -289,19 +289,36 @@ Ideally our chosen model has the
 
 ### Probability and Odds are NOT the same!
 
+.pull-left[
+
 -   Odds are often used incorrectly. For example:
 
-#![](Plane_Odds_Incorrect.png)
+&lt;img src="docs_files/images/Plane_Odds_Incorrect.png" width="758" /&gt;
 
--   This item indicates that the PROBABILITY of survival is 95.7%
+]
 
--   Odds of Survival `\(≠\)` Probability of Survival = P(Survival)
+
+.pull-right[
+
+This news item indicates that the PROBABILITY of survival is 95.7%
+
+
+
+**Odds of Survival `\(≠\)` Prob. of Survival = P(Survival)**
+
+&lt;br&gt;
 
 $$
 Odds(Survival) = \frac{P(Survival)}{1-P(Survival)} = ?
 $$
 
+&lt;br&gt;
+
 -   **Note: This question is in HW 8**
+
+]
+
+
 
 ---
 
@@ -366,13 +383,15 @@ If you flip a fair coin, the probability of heads = probability of tails = 1/2, 
 
 - What is the probability this horse will win?
 
-  - **How do we calculate probability from odds?**
+&lt;br&gt;
+
+**How do we calculate probability from odds?**
 
 $$
 Probability = \frac{Odds}{1 + Odds}
 $$
 
-- **9 to 1 odds means Odds = `\(\frac{1}{9}\)`**
+**9 to 1 odds means Odds = `\(\frac{1}{9}\)`**
 
 $$ 
 P(Win) = \frac{\frac{1}{9}}{1 + \frac{1}{9}} = 
@@ -380,7 +399,7 @@ P(Win) = \frac{\frac{1}{9}}{1 + \frac{1}{9}} =
 \frac{1}{10} = 0.1
 $$ 
 
-**Conclusion:** A horse with 9 to 1 odds of winning has a 10% chance of winning the horse race.
+**Conclusion:** A horse with **9 to 1 odds** of winning has a **probability of 0.1 or a 10%** chance of winning the horse race.
 
 ---
 
@@ -392,7 +411,11 @@ In Texas Hold'em, each player get's two face down cards in their 'pocket'. There
 
 &lt;br&gt;
 
-The odds of getting a 'Pocket Pair', a pair two cards of the same value in the face down cards is 16 to 1, i.e `\(Odds(Pocket Pair) = \frac{1}{16}\)`
+The odds of getting a 'Pocket Pair', a pair two cards of the same value in the face down cards is 16 to 1.
+
+&lt;br&gt;
+
+`\(Odds(Pocket Pair) = \frac{1}{16}\)`
 
 &lt;br&gt;
 
@@ -423,7 +446,7 @@ $$
 
 .pull-right[
 
-
+&lt;img src="docs_files/images/owl.png" width="304" /&gt;
 
 ]
 
@@ -461,6 +484,8 @@ So, we can convert the estimated log odds to a probability in Excel or R:
 - A logistic regression model predicts the log odds that a small business owner will be audited by the IRS based on relevant predictor variables.
 
 - Based on this model, a cafe in Syracuse determines that the estimated log odds of being audited in 2022 is -1.946, **Y' = -1.946**
+
+&lt;br&gt;
 
 #### Lecture 17 In-class Exercises
 
@@ -524,7 +549,7 @@ All data are CATEGORICAL:
 
 .pull-right[
 
-
+&lt;img src="docs_files/images/titanic.jpg" width="272" /&gt;
 
 
 ]
@@ -634,7 +659,7 @@ blr_regress(titanic_logistic) # examine model output
 # summary(titanic_logistic)   # alternative if bls_regress doesn't work
 ```
 
-#### Part 1 of Output
+#### Part 1 of Output (Not Essential for BUA 345)
 &lt;img src="docs_files/images/bls_regress_tit_output1.jpg" width="549" /&gt;
 
 ---
@@ -646,8 +671,28 @@ blr_regress(titanic_logistic) # examine model output
 blr_regress(titanic_logistic) # examine model output
 ```
 
-#### Part 2 of Output
+.pull-left[
+
+#### Part 2 of Output (Only Use Max. Likelihood Estimates in BUA 345)
 &lt;img src="docs_files/images/bls_regress_tit_output2.jpg" width="485" /&gt;
+
+
+]
+
+.pull-right[
+
+&lt;br&gt;
+
+- `Estimate` column shows the estimated beta coefficients for our model.
+
+   - We will use these beta coefficients in Excel to show how regression estimates of log odds and probability are calculated for each observation (passenger) in the data.
+
+- `Pr(&gt;|z|)` column shows the P-value for each beta coefficient.
+
+
+]
+
+
 
 ---
 
@@ -820,7 +865,7 @@ latepmt_logistic &lt;- glm(Late_PaymentF ~Age + Dependents + Debt_Ratio,        
 blr_regress(latepmt_logistic) # examine model output
 ```
 
-#### Part 1 of Output
+#### Part 1 of Output (Not Essential for BUA 345)
 &lt;img src="docs_files/images/bls_regress_ltpmt_output1.jpg" width="573" /&gt;
 
 ---
@@ -832,8 +877,28 @@ blr_regress(latepmt_logistic) # examine model output
 blr_regress(titanic_logistic) # examine model output
 ```
 
-#### Part 2 of Output
+.pull-left[
+
+#### Part 2 of Output (Only Use Max. Likelihood Estimates in BUA 345)
 &lt;img src="docs_files/images/bls_regress_ltpmt_output2.jpg" width="523" /&gt;
+
+
+
+]
+
+
+.pull-right[
+
+&lt;br&gt;
+
+- `Estimate` column shows the estimated beta coefficients for our model.
+
+   - We will use these beta coefficients in Excel to show how regression estimates of log odds and probability are calculated for each observation (consumer) in the data.
+
+- `Pr(&gt;|z|)` column shows the P-value for each beta coefficient.
+
+]
+
 
 ---
 
@@ -911,7 +976,7 @@ Use provided worksheet to do calculation. Round answer to 3 decimal places.
 
 .pull-right[
 
-
+&lt;img src="docs_files/images/owl.png" width="304" /&gt;
 
 ]
 
